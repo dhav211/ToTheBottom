@@ -12,7 +12,7 @@ class Platform extends Object
     var scene:Scene;
     var game:Game;
     var sprite:Bitmap;
-    var collisionShape:Polygon;
+    public var collisionShape(default, null):Polygon;
     var position:Vector2;
 
     public function new (_scene:Scene, _game:Game, _x:Float, _y:Float)
