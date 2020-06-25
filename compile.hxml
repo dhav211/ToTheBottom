@@ -1,0 +1,11 @@
+--class-path src
+
+-lib heaps
+-lib hlsdl
+-lib differ
+-lib seedyrng
+-lib hxmath
+-hl to_the_bottom.hl
+-main Game
+
+-D resourcesPath=assets
