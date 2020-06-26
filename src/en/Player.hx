@@ -29,6 +29,8 @@ class Player extends Entity
     var currentJumpSpeed:Float = 0;
     var isJumping:Bool = false;
 
+    var currentDownwardVelocity:Float = 85;
+
     public function new(_scene:Scene, _game:Game, _x:Float, _y:Float)
     {
         super(_scene, _game, _x, _y);
@@ -49,7 +51,6 @@ class Player extends Entity
         Move(elapsed);
         Jump(elapsed);
         ApplyGravity(elapsed);
-
 
         SetPosition();
     }
@@ -82,24 +83,35 @@ class Player extends Entity
             isJumping = true;
             currentJumpSpeed = jumpSpeed;
         }
+        else if (isOnFloor || isOnCeiling)
+        {
+            isJumping = false;
+        }
         
         if (isJumping && currentJumpSpeed > 0)
         {
             var jumpIncrease = currentJumpSpeed * _elapsed;
             currentJumpSpeed -= jumpIncrease * 2;
-            currentJumpHeight += jumpIncrease;
             position.y -= jumpIncrease;
         }
     }
                 
     function ApplyGravity(_elapsed:Float)
     {
-        var gravity:Float = 155;
+        var terminalVelocity:Float = 275;
+        var gravity:Float = 125;
 
         if (!isOnFloor)
-            position.y += gravity * _elapsed;
+        {
+            if (currentDownwardVelocity < terminalVelocity)
+                currentDownwardVelocity += gravity * _elapsed;
+            position.y += currentDownwardVelocity * _elapsed;
+        }
         else
+        {
             position.y += .1;
+            currentDownwardVelocity = 85;
+        }
     }
 
     function CollideWithMap() 
@@ -137,8 +149,7 @@ class Player extends Entity
                     isOnWall = true;
                     currentCollisionSide = LEFT;
                     position.x -= collideInfo.overlap;
-                }
-                
+                }   
             }
         }
     }
