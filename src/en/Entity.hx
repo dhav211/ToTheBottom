@@ -1,5 +1,6 @@
 package en;
 
+import h2d.Anim;
 import h2d.Bitmap;
 import h2d.Object;
 import h2d.Scene;
@@ -10,9 +11,11 @@ class Entity extends Object
 {
     var scene:Scene;
     var game:Game;
-    var sprite:Bitmap;
+    //var sprite:Bitmap;
+    var sprite:Anim;
     var collisionShape:Polygon;
     var position:Vector2;
+    var offset:Vector2;
 
     public function new (_scene:Scene, _game:Game, _x:Float, _y:Float)
     {
@@ -30,8 +33,8 @@ class Entity extends Object
 
     public function update(elapsed:Float) 
 	{
-		collisionShape.x = x;
-		collisionShape.y = y;
+		collisionShape.x = x + offset.x;
+		collisionShape.y = y + offset.y;
 	}
     
     public function dispose()

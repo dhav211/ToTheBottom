@@ -1,5 +1,7 @@
 package en;
 
+import hxmath.math.Vector2;
+import hxd.Res;
 import differ.Collision;
 import differ.data.ShapeCollision;
 import h2d.Bitmap;
@@ -7,6 +9,8 @@ import h2d.Tile;
 import hxd.Key;
 import differ.shapes.Polygon;
 import h2d.Scene;
+import h2d.Anim;
+import controllers.AnimationController;
 
 enum CollisionSide 
 {
@@ -31,16 +35,23 @@ class Player extends Entity
 
     var currentDownwardVelocity:Float = 85;
 
+    var animController:AnimationController;
+
     public function new(_scene:Scene, _game:Game, _x:Float, _y:Float)
     {
         super(_scene, _game, _x, _y);
 
-        var tile:Tile=hxd.Res.temp_player.toTile();
-        tile = tile.center();
+        var tiles:Array<Tile>=hxd.Res.sprites.player.toTile().split(16);
+        tiles[0].center();
         
-        sprite = new Bitmap(tile, this);
-
-        collisionShape = Polygon.square(_x, _y, 16);
+        sprite = new Anim(tiles, 4, this);
+        animController = new AnimationController(sprite, tiles);
+        
+        
+        SetAnimations(tiles);
+        collisionShape = Polygon.square(_x, _y, 8);
+        offset = new Vector2(12, 12);
+        animController.Play("idle");
     }
 
     public override function update(elapsed:Float) 
@@ -66,10 +77,16 @@ class Player extends Entity
         if (left && currentCollisionSide != LEFT)
         {
             position.x -= MOVE_SPEED * _elapsed;
+            animController.Play("walk");
         }
-        if (right && currentCollisionSide != RIGHT)
+        else if (right && currentCollisionSide != RIGHT)
         {
             position.x += MOVE_SPEED * _elapsed;
+            animController.Play("walk");
+        }
+        else if (!left && !right)
+        {
+            animController.Play("idle");
         }
     }
 
@@ -152,5 +169,11 @@ class Player extends Entity
                 }   
             }
         }
+    }
+
+    function SetAnimations(_tiles:Array<Tile>)
+    {
+        animController.Add("walk", [_tiles[2], _tiles[0], _tiles[2], _tiles[1]]);
+        animController.Add("idle", [_tiles[8], _tiles[9]]);
     }
 }
