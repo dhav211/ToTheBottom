@@ -12,6 +12,8 @@ class AnimationController
     var entity:Player;
     var frames:Array<Tile>;
     var animations:Map<String,Array<Tile>> = [];
+    var animationsLooping:Map<String, Bool> = [];
+    var animationsSpeed:Map<String, Int> = [];
     var animationPlaying:String = "";
     var currentAnimation:Anim = null;
 
@@ -22,11 +24,14 @@ class AnimationController
     }
 
     /*
-    The frames are added to the animations dictionary, which are an array of tiles, the key is a string which is the name of the animation
+    The frames are added to the animations dictionary, which are an array of tiles, the key is a string which is the name of the animation.
+    The other two dictionaries are used to set the looping bool and the speed of the animation itself
     */
-    public function Add(_name:String, _frames:Array<Tile>)
+    public function Add(_name:String, _frames:Array<Tile>, ?_speed:Int = 4,?_looping:Bool = true)
     {
         animations.set(_name, _frames);
+        animationsSpeed.set(_name, _speed);
+        animationsLooping.set(_name, _looping);
     }
 
     /*
@@ -37,6 +42,8 @@ class AnimationController
     {   
         if (animationPlaying != _name)
         {
+            currentAnimation.loop = animationsLooping[_name];
+            currentAnimation.speed = animationsSpeed[_name];
             currentAnimation.play(animations[_name]);
             animationPlaying = _name;
         }

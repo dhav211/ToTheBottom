@@ -25,9 +25,54 @@
       "exportMode": 0,
       "arrayMode": 0,
       "defaultTileset": "TempTileset"
+    },
+    {
+      "definition": "entity",
+      "name": "entity",
+      "gridSize": {"x": 8, "y": 8},
+      "exportID": "36805273",
+      "requiredTags": [],
+      "excludedTags": []
     }
   ],
-  "entities": [],
+  "entities": [
+    {
+      "exportID": "36786628",
+      "name": "player",
+      "limit": -1,
+      "size": {"x": 8, "y": 8},
+      "origin": {"x": 0, "y": 0},
+      "originAnchored": true,
+      "shape": {
+        "label": "Rectangle",
+        "points": [
+          {"x": -1, "y": -1},
+          {"x": 1, "y": -1},
+          {"x": -1, "y": 1},
+          {"x": 1, "y": -1},
+          {"x": -1, "y": 1},
+          {"x": 1, "y": 1}
+        ]
+      },
+      "color": "#ff0000ff",
+      "tileX": false,
+      "tileY": false,
+      "tileSize": {"x": 16, "y": 16},
+      "resizeableX": false,
+      "resizeableY": false,
+      "rotatable": false,
+      "rotationDegrees": 360,
+      "canFlipX": false,
+      "canFlipY": false,
+      "canSetColor": false,
+      "hasNodes": false,
+      "nodeLimit": 0,
+      "nodeDisplay": 0,
+      "nodeGhost": true,
+      "tags": [],
+      "values": []
+    }
+  ],
   "tilesets": [
     {"label": "TempTileset", "path": "temp_tileset.png", "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAYCAYAAAC8/X7cAAAAAXNSR0IArs4c6QAAAZFJREFUWIXNWDtuwzAMfS46BAG65nOBbgZ6Cx/DZ+sxeosG2bKkWz5rgSCbMxQ0WIakfhbgtxC0BIoS9UTSTd92Aypi93OsaR4vAHA9X1BDEraLZRU5bmC1WeN6vkwuCaf7DdvFcpTkRKkOAE3fdoO26BQ68HeF+IlNhdP9BkBEgKNE1yKggTYZq3N7dCgjB7zJKd/5NSJQ+LlTcl6Mrtl74oC2U5rMJf/O4XFAjudIvgnA4YB3yhrkPQ9xwIq4ButQAOCVjFnOf/8eGs/4x9v7IF8IeWJ8TI5/7r9c+33bDd6rpnJALhiC5zzwzAGPcxo8eyoHrPttgW82hQOx8DjwLwLcaGoEOKzFrPEQPA6YeaCUwF4eyI0AtxfMA7kRmAUHpFMhcIOz4EDJK8TtycWs8RA8DjTUD9TgwGqzHvsBKw+kbIL75uYBWjClLvecsziQ0l9k1UJ8sua8dtVmVQuVILYfSO0zCG4eSK3TNT2mHwDS+w6yZ+aBnDrd0wG9NCnRXQ7U7omn1AH2jNZC7d8qD0/TtSuG94i+AAAAAElFTkSuQmCC", "tileWidth": 8, "tileHeight": 8, "tileSeparationX": 0, "tileSeparationY": 0}
   ]

@@ -33,6 +33,7 @@ class Player extends Entity
     var currentJumpHeight:Float = 0;
     var currentJumpSpeed:Float = 0;
     var isJumping:Bool = false;
+    var isAttacking:Bool = false;
 
     var currentDownwardVelocity:Float = 85;
 
@@ -61,6 +62,7 @@ class Player extends Entity
         Move(elapsed);
         Jump(elapsed);
         ApplyGravity(elapsed);
+        Attack();
 
         SetPosition();
     }
@@ -80,16 +82,19 @@ class Player extends Entity
         if (left && currentCollisionSide != LEFT) // TODO removing the currentCollisionSide fixes the stuck in floor bug
         {
             position.x -= MOVE_SPEED * _elapsed;
-            animController.Play("walk");
+            if (!isAttacking)
+                animController.Play("walk");
         }
         else if (right && currentCollisionSide != RIGHT)
         {
             position.x += MOVE_SPEED * _elapsed;
-            animController.Play("walk");
+            if (!isAttacking)
+                animController.Play("walk");
         }
         else if (!left && !right)
         {
-            animController.Play("idle");
+            if (!isAttacking)
+                animController.Play("idle");
         }
     }
 
@@ -100,7 +105,7 @@ class Player extends Entity
     function Jump(_elapsed:Float) 
     {
         var jumpSpeed:Float = 125;
-        var jump:Bool = Key.isPressed(Key.SPACE);
+        var jump:Bool = Key.isPressed(Key.UP);
         
         if (jump && isOnFloor)
         {
@@ -139,6 +144,15 @@ class Player extends Entity
         {
             position.y += .1;
             currentDownwardVelocity = 45;
+        }
+    }
+
+    function Attack()
+    {
+        if (Key.isPressed(Key.SPACE)  && !isAttacking)
+        {
+            isAttacking = true;
+            animController.Play("attack");
         }
     }
 
@@ -193,6 +207,7 @@ class Player extends Entity
     function SetAnimations(_tiles:Array<Tile>)
     {
         animController.Add("walk", [_tiles[2], _tiles[0], _tiles[2], _tiles[1]]);
-        animController.Add("idle", [_tiles[8], _tiles[9]]);
+        animController.Add("idle", [_tiles[8], _tiles[9]], 2);
+        animController.Add("attack", [_tiles[3],_tiles[4],_tiles[5],_tiles[6],_tiles[7]], 8, false);
     }
 }
