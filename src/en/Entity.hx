@@ -6,22 +6,23 @@ import h2d.Object;
 import h2d.Scene;
 import differ.shapes.Polygon;
 import hxmath.math.Vector2;
+import controllers.Camera;
 
 class Entity extends Object
 {
     var scene:Scene;
+    var camera:Camera;
     var game:Game;
-    //var sprite:Bitmap;
     var sprite:Anim;
     var collisionShape:Polygon;
     var position:Vector2;
     var offset:Vector2;
 
-    public function new (_scene:Scene, _game:Game, _x:Float, _y:Float)
+    public function new (_camera:Camera, _game:Game, _x:Float, _y:Float)
     {
-        super(_scene);
+        super(_camera);
 
-        scene = _scene;
+        camera = _camera;
         game = _game;
         x = _x;
         y = _y;

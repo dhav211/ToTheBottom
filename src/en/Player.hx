@@ -11,6 +11,7 @@ import differ.shapes.Polygon;
 import h2d.Scene;
 import h2d.Anim;
 import controllers.AnimationController;
+import controllers.Camera;
 
 enum CollisionSide 
 {
@@ -21,7 +22,7 @@ enum CollisionSide
 
 class Player extends Entity
 {
-    final MOVE_SPEED:Float = 100;
+    final MOVE_SPEED:Float = 45;
 
     var currentCollisionSide:CollisionSide = NONE;
 
@@ -37,16 +38,14 @@ class Player extends Entity
 
     var animController:AnimationController;
 
-    public function new(_scene:Scene, _game:Game, _x:Float, _y:Float)
+    public function new(_camera:Camera, _game:Game, _x:Float, _y:Float)
     {
-        super(_scene, _game, _x, _y);
+        super(_camera, _game, _x, _y);
 
         var tiles:Array<Tile>=hxd.Res.sprites.player.toTile().split(16);
-        tiles[0].center();
         
         sprite = new Anim(tiles, 4, this);
         animController = new AnimationController(sprite, tiles);
-        
         
         SetAnimations(tiles);
         collisionShape = Polygon.square(_x, _y, 8);
@@ -92,7 +91,7 @@ class Player extends Entity
 
     function Jump(_elapsed:Float) 
     {
-        var jumpSpeed:Float = 325;
+        var jumpSpeed:Float = 125;
         var jump:Bool = Key.isPressed(Key.SPACE);
         
         if (jump && isOnFloor)
@@ -115,8 +114,8 @@ class Player extends Entity
                 
     function ApplyGravity(_elapsed:Float)
     {
-        var terminalVelocity:Float = 275;
-        var gravity:Float = 125;
+        var terminalVelocity:Float = 150;
+        var gravity:Float = 65;
 
         if (!isOnFloor)
         {
@@ -127,7 +126,7 @@ class Player extends Entity
         else
         {
             position.y += .1;
-            currentDownwardVelocity = 85;
+            currentDownwardVelocity = 45;
         }
     }
 
@@ -138,9 +137,9 @@ class Player extends Entity
         isOnCeiling = false;
         currentCollisionSide = NONE;
 
-        for (platform in game.platforms)  // Set an array of the platforms collision shapes to try shapeWithShapes.
+        for (collision in game.mapCollisions)  // Set an array of the platforms collision shapes to try shapeWithShapes.
         {
-            var collideInfo:ShapeCollision = Collision.shapeWithShape(collisionShape, platform.collisionShape);
+            var collideInfo:ShapeCollision = Collision.shapeWithShape(collisionShape, collision);
 
             if (collideInfo != null)
             {
@@ -152,7 +151,7 @@ class Player extends Entity
                 else if (collideInfo.unitVectorY == 1)
                 {
                     isOnCeiling = true;
-                    position.y -= collideInfo.overlap;  // MIGHT BE WRONG
+                    position.y -= collideInfo.overlap;
                 }
 
                 if (collideInfo.unitVectorX == -1)

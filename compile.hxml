@@ -5,6 +5,7 @@
 -lib differ
 -lib seedyrng
 -lib hxmath
+-lib ogmo-3
 -hl to_the_bottom.hl
 -main Game
 

@@ -6,6 +6,7 @@ import h2d.Bitmap;
 import h2d.Scene;
 import h2d.Object;
 import differ.shapes.Polygon;
+import controllers.Camera;
 
 class Platform extends Object
 {
@@ -15,11 +16,11 @@ class Platform extends Object
     public var collisionShape(default, null):Polygon;
     var position:Vector2;
 
-    public function new (_scene:Scene, _game:Game, _x:Float, _y:Float)
+    public function new (_camera:Camera, _game:Game, _x:Float, _y:Float)
     {
-        super(_scene);
+        super(_camera);
 
-        scene = _scene;
+        //scene = _scene;
         game = _game;
         x = _x;
         y = _y;
