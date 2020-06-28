@@ -34,8 +34,7 @@ class Entity extends Object
 
     public function update(elapsed:Float) 
 	{
-		collisionShape.x = x + offset.x;
-		collisionShape.y = y + offset.y;
+		SetCollisionShapePosition();
 	}
     
     public function dispose()
@@ -48,5 +47,15 @@ class Entity extends Object
     {
         x = position.x;
         y = position.y;   
+    }
+
+    /*
+    Since the collison shapes are based on a third party library they don't have the same scene/parent binding as other objects do. So this will set the position
+    of the collision shape whenever the position of object is changed.
+    */
+    function SetCollisionShapePosition()
+    {
+        collisionShape.x = x + offset.x;
+		collisionShape.y = y + offset.y;
     }
 }

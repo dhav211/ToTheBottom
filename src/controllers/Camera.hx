@@ -25,7 +25,7 @@ class Camera extends Object
         scene = _scene;
         game = _game;
 
-        zoom = 2;
+        zoom = 4;
 
         viewPosition = new Vector2(0.5 * _scene.width - _x, 0.5 * _scene.height - _y);
         x = viewPosition.x;

@@ -25,7 +25,7 @@ class Game extends hxd.App
 
         camera = new Camera(s2d, this, s2d.width / 2, s2d.height / 2);
 
-        var player = new Player(camera, this, 150, 160);
+        var player = new Player(camera, this, 140, 174);
 
         camera.target = player;
 
@@ -41,31 +41,29 @@ class Game extends hxd.App
                 for (x in 0...Std.int(tileImage.width / tileSize))
                     tileImage.sub(x * tileSize, y * tileSize, tileSize, tileSize)
         ];
-
-        for (tile in tileSet)
-            tile.center();
-
-        //var layers:Array<LayerDefinition> = level.layers;
         
+        
+
         level.onTileLayerLoaded = (tiles, layer) -> 
 		{
 			var tileGroup = new TileGroup(tileImage, camera);
 			tileGroup.x += layer.offsetX;
-			tileGroup.y += layer.offsetY;
+            tileGroup.y += layer.offsetY;
 
 			for (i in 0...tiles.length) 
 			{
 				if (tiles[i] > -1) 
 				{
-					var x = i % layer.gridCellsX;
-					var y = Math.floor(i / layer.gridCellsX);
+					var x:Int = i % layer.gridCellsX;
+                    var y:Int = Math.floor(i / layer.gridCellsX);
+                    
                     tileGroup.add(x * layer.gridCellWidth, y * layer.gridCellHeight, tileSet[tiles[i]]);
-                    var collision:Polygon = Polygon.square(x * layer.gridCellWidth, y * layer.gridCellHeight, layer.gridCellHeight, false);
+                    var collision:Polygon = Polygon.rectangle(x * layer.gridCellWidth, y * layer.gridCellHeight, 8, 8, false);
                     mapCollisions.push(collision);
 				}
-			}
+            }
         }
-        
+ 
         level.load();
     }
 

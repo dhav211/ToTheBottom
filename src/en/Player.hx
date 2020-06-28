@@ -48,7 +48,7 @@ class Player extends Entity
         animController = new AnimationController(sprite, tiles);
         
         SetAnimations(tiles);
-        collisionShape = Polygon.square(_x, _y, 8);
+        collisionShape = Polygon.rectangle(_x, _y, 5,8);
         offset = new Vector2(12, 12);
         animController.Play("idle");
     }
@@ -65,6 +65,10 @@ class Player extends Entity
         SetPosition();
     }
 
+    /*
+    Simple move function that checks to see if there are any collisions happening, and if not will move player in given direction. Also controls walk and idle
+    animations.
+    */
     function Move(_elapsed:Float)
     {
         var right:Bool = Key.isDown(Key.RIGHT);
@@ -73,7 +77,7 @@ class Player extends Entity
         if (left && right)
             left = right = false;
 
-        if (left && currentCollisionSide != LEFT)
+        if (left && currentCollisionSide != LEFT) // TODO removing the currentCollisionSide fixes the stuck in floor bug
         {
             position.x -= MOVE_SPEED * _elapsed;
             animController.Play("walk");
@@ -89,6 +93,10 @@ class Player extends Entity
         }
     }
 
+    /*
+    lets player jump by checking if jump is pressed and current speed of jump. When player starts to jump it launches at full speed and as it gets higher in the
+    jump it will lose speed until gravity is greater than jump speed, which in that case, player will fall to the ground.
+    */
     function Jump(_elapsed:Float) 
     {
         var jumpSpeed:Float = 125;
@@ -111,7 +119,11 @@ class Player extends Entity
             position.y -= jumpIncrease;
         }
     }
-                
+    
+    /*
+    Gravity will not be at full force right when player falls, it will build up force until it reaches terminal velocity and then gravity push will be the same
+    until player touches floor, which then the force will be reset to it's initial value.
+    */
     function ApplyGravity(_elapsed:Float)
     {
         var terminalVelocity:Float = 150;
@@ -137,13 +149,15 @@ class Player extends Entity
         isOnCeiling = false;
         currentCollisionSide = NONE;
 
-        for (collision in game.mapCollisions)  // Set an array of the platforms collision shapes to try shapeWithShapes.
+        for (collision in game.mapCollisions)  // TODO maybe not the most efficent way, look at TODO for better idea
         {
             var collideInfo:ShapeCollision = Collision.shapeWithShape(collisionShape, collision);
 
             if (collideInfo != null)
             {
-                if (collideInfo.unitVectorY == -1)
+                var heightDifference:Float = Math.floor(Math.abs((collideInfo.shape2.y - 4) - collideInfo.shape1.y));
+
+                if (collideInfo.unitVectorY == -1 && !isOnFloor)
                 {
                     isOnFloor = true;
                     position.y += collideInfo.overlap;
@@ -156,15 +170,21 @@ class Player extends Entity
 
                 if (collideInfo.unitVectorX == -1)
                 {
-                    isOnWall = true;
-                    currentCollisionSide = RIGHT;
-                    position.x += collideInfo.overlap;
+                    if (heightDifference > 0)
+                    {
+                        isOnWall = true;
+                        currentCollisionSide = RIGHT;
+                        position.x += collideInfo.overlap;
+                    }
                 }
                 else if (collideInfo.unitVectorX == 1)
                 {
-                    isOnWall = true;
-                    currentCollisionSide = LEFT;
-                    position.x -= collideInfo.overlap;
+                    if (heightDifference > 0)
+                    {
+                        isOnWall = true;
+                        currentCollisionSide = LEFT;
+                        position.x -= collideInfo.overlap;
+                    }
                 }   
             }
         }
