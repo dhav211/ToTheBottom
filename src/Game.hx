@@ -23,7 +23,6 @@ class Game extends hxd.App
         camera = new Camera(s2d, this, s2d.width / 2, s2d.height / 2);
         levelLoader = new LevelLoader(camera, this);
         levelLoader.LoadLevel();
-
         
         s2d.scaleMode = Zoom(2);
         camera.target = player;

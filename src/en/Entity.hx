@@ -7,6 +7,13 @@ import h2d.Scene;
 import differ.shapes.Polygon;
 import hxmath.math.Vector2;
 import controllers.Camera;
+import h2d.Tile;
+
+enum DirectionFacing
+{
+    LEFT;
+    RIGHT;
+}
 
 class Entity extends Object
 {
@@ -17,6 +24,8 @@ class Entity extends Object
     var collisionShape:Polygon;
     var position:Vector2;
     var offset:Vector2;
+    var currentDirectionFacing:DirectionFacing = RIGHT;
+    var tiles:Array<Tile> = [];
 
     public function new (_camera:Camera, _game:Game, _x:Float, _y:Float)
     {

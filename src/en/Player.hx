@@ -1,5 +1,6 @@
 package en;
 
+import en.Entity.DirectionFacing;
 import hxmath.math.Vector2;
 import hxd.Res;
 import differ.Collision;
@@ -20,6 +21,15 @@ enum CollisionSide
     RIGHT;
 }
 
+enum StateMachine
+{
+    IDLE;
+    WALK;
+    ATTACK;
+    JUMP;
+    FALL;
+}
+
 class Player extends Entity
 {
     final MOVE_SPEED:Float = 45;
@@ -29,6 +39,8 @@ class Player extends Entity
     var isOnFloor:Bool = false;
     var isOnWall:Bool = false;
     var isOnCeiling:Bool = false;
+
+    var currentState:StateMachine = IDLE;
 
     var currentJumpHeight:Float = 0;
     var currentJumpSpeed:Float = 0;
@@ -43,10 +55,11 @@ class Player extends Entity
     {
         super(_camera, _game, _x, _y);
 
-        var tiles:Array<Tile>=hxd.Res.sprites.player.toTile().split(16);
+        tiles=hxd.Res.sprites.player.toTile().split(16);
         
         sprite = new Anim(tiles, 4, this);
         animController = new AnimationController(sprite, tiles);
+        currentDirectionFacing = RIGHT;
         
         SetAnimations(tiles);
         collisionShape = Polygon.rectangle(_x, _y, 5,8);
@@ -79,22 +92,35 @@ class Player extends Entity
         if (left && right)
             left = right = false;
 
-        if (left && currentCollisionSide != LEFT) // TODO removing the currentCollisionSide fixes the stuck in floor bug
+        if (currentState != ATTACK)
         {
-            position.x -= MOVE_SPEED * _elapsed;
-            if (!isAttacking)
+            if (left && currentCollisionSide != LEFT)
+            {
+                position.x -= MOVE_SPEED * _elapsed;
+                //FlipSprite(LEFT);
+                currentDirectionFacing = LEFT;
                 animController.Play("walk");
-        }
-        else if (right && currentCollisionSide != RIGHT)
-        {
-            position.x += MOVE_SPEED * _elapsed;
-            if (!isAttacking)
+            }
+            else if (right && currentCollisionSide != RIGHT)
+            {
+                position.x += MOVE_SPEED * _elapsed;
+                //FlipSprite(RIGHT);
+                currentDirectionFacing = RIGHT;
                 animController.Play("walk");
-        }
-        else if (!left && !right)
-        {
-            if (!isAttacking)
+            }
+            else if (!left && !right)
+            {
                 animController.Play("idle");
+            }
+        }
+    }
+
+    function FlipSprite(_directionToFlip:DirectionFacing)
+    {
+        if (currentDirectionFacing != _directionToFlip)
+        {
+            for (tile in tiles)
+                tile.flipX();
         }
     }
 
@@ -152,8 +178,15 @@ class Player extends Entity
         if (Key.isPressed(Key.SPACE)  && !isAttacking)
         {
             isAttacking = true;
+            currentState = ATTACK;
             animController.Play("attack");
         }
+    }
+
+    function onAttackFinished() 
+    {
+        currentState = IDLE;
+        isAttacking = false;    
     }
 
     function CollideWithMap() 
@@ -208,6 +241,6 @@ class Player extends Entity
     {
         animController.Add("walk", [_tiles[2], _tiles[0], _tiles[2], _tiles[1]]);
         animController.Add("idle", [_tiles[8], _tiles[9]], 2);
-        animController.Add("attack", [_tiles[3],_tiles[4],_tiles[5],_tiles[6],_tiles[7]], 8, false);
+        animController.Add("attack", [_tiles[3],_tiles[4],_tiles[5],_tiles[6],_tiles[7]], 10, false, onAttackFinished);
     }
 }
