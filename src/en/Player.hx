@@ -28,6 +28,7 @@ enum StateMachine
     ATTACK;
     JUMP;
     FALL;
+    HIT;
 }
 
 class Player extends Entity
@@ -41,6 +42,8 @@ class Player extends Entity
     var isOnCeiling:Bool = false;
 
     var currentState:StateMachine = IDLE;
+
+    var attackBox:Polygon;
 
     var currentJumpHeight:Float = 0;
     var currentJumpSpeed:Float = 0;
@@ -56,10 +59,15 @@ class Player extends Entity
         super(_camera, _game, _x, _y);
 
         tiles=hxd.Res.sprites.player.toTile().split(16);
+
+        for (tile in tiles)
+            tile.center();
         
         sprite = new Anim(tiles, 4, this);
         animController = new AnimationController(sprite, tiles);
         currentDirectionFacing = RIGHT;
+
+        attackBox = Polygon.rectangle(x,y,8,8, false);
         
         SetAnimations(tiles);
         collisionShape = Polygon.rectangle(_x, _y, 5,8);
@@ -97,14 +105,14 @@ class Player extends Entity
             if (left && currentCollisionSide != LEFT)
             {
                 position.x -= MOVE_SPEED * _elapsed;
-                //FlipSprite(LEFT);
+                FlipSprite(LEFT);
                 currentDirectionFacing = LEFT;
                 animController.Play("walk");
             }
             else if (right && currentCollisionSide != RIGHT)
             {
                 position.x += MOVE_SPEED * _elapsed;
-                //FlipSprite(RIGHT);
+                FlipSprite(RIGHT);
                 currentDirectionFacing = RIGHT;
                 animController.Play("walk");
             }
@@ -120,7 +128,9 @@ class Player extends Entity
         if (currentDirectionFacing != _directionToFlip)
         {
             for (tile in tiles)
+            {
                 tile.flipX();
+            }
         }
     }
 
@@ -136,14 +146,16 @@ class Player extends Entity
         if (jump && isOnFloor)
         {
             isJumping = true;
+            currentState = JUMP;
             currentJumpSpeed = jumpSpeed;
         }
-        else if (isOnFloor || isOnCeiling)
+        else if ((isOnFloor || isOnCeiling) && currentState != ATTACK)
         {
             isJumping = false;
+            currentState = IDLE;
         }
         
-        if (isJumping && currentJumpSpeed > 0)
+        if (currentState == JUMP && currentJumpSpeed > 0)
         {
             var jumpIncrease = currentJumpSpeed * _elapsed;
             currentJumpSpeed -= jumpIncrease * 2;
@@ -175,11 +187,38 @@ class Player extends Entity
 
     function Attack()
     {
-        if (Key.isPressed(Key.SPACE)  && !isAttacking)
+        if (Key.isPressed(Key.SPACE) && currentState != ATTACK && currentState != JUMP)
         {
             isAttacking = true;
             currentState = ATTACK;
             animController.Play("attack");
+
+            attackBox.y = collisionShape.y;
+
+            if (currentDirectionFacing == RIGHT)
+            {
+                attackBox.x = collisionShape.x;
+                trace(collisionShape.x);
+                trace(attackBox.x);
+
+            }
+            else if (currentDirectionFacing == LEFT)
+            {
+                attackBox.x = collisionShape.x - 8;
+            }
+
+            for (entity in game.entities)
+            {
+                if (entity != this)
+                {
+                    var collideInfo:ShapeCollision = Collision.shapeWithShape(attackBox, entity.collisionShape);
+
+                    if (collideInfo != null)
+                    {
+                        trace("HIT THE ENEMY!");
+                    }
+                }
+            }
         }
     }
 

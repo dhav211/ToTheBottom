@@ -1,5 +1,7 @@
 package;
 
+import h2d.TileGroup;
+import h2d.Tile;
 import en.Entity;
 import en.Player;
 import map.Platform;

@@ -1,6 +1,7 @@
 package controllers;
 
 import en.Player;
+import en.Slime;
 import differ.shapes.Polygon;
 import h2d.TileGroup;
 import h2d.Tile;
@@ -57,6 +58,11 @@ class LevelLoader
                 if (entity.name == "player")
                 {
                     game.player = new Player(camera, game, entity.x + layer.offsetX, entity.y + layer.offsetY - 4);
+                }
+
+                if (entity.name == "slime")
+                {
+                    var slime = new Slime(camera, game, entity.x + layer.offsetX, entity.y + layer.offsetY - 8);
                 }
 			}
 		}
